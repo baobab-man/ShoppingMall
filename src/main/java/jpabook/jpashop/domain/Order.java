@@ -5,11 +5,11 @@ import static javax.persistence.FetchType.LAZY;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -35,10 +35,10 @@ public class Order {
   @JoinColumn(name = "member_id")
   private Member member; // order가 연관관계 주인
 
-  @OneToMany(mappedBy = "order")
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) //order만 persist하면 orderItem도 같이 persist됨
   private List<OrderItem> orderItems = new ArrayList<>();
 
-  @OneToOne(fetch = LAZY)
+  @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
   @JoinColumn(name = "delivery_id")
   private Delivery delivery; // order가 연관관계 주인
 
@@ -46,5 +46,21 @@ public class Order {
 
   @Enumerated(EnumType.STRING)
   private OrderStatus status; //주문상태 [ORDER, CANCEL]
+
+  //연관관계 메서드
+  public void setMember(Member member) {
+    this.member = member;
+    member.getOrders().add(this);
+  }
+
+  public void addOrderItem(OrderItem orderItem) {
+    orderItems.add(orderItem);
+    orderItem.setOrder(this);
+  }
+
+  public void setDelivery(Delivery delivery) {
+    this.delivery = delivery;
+    delivery.setOrder(this);
+  }
 
 }
