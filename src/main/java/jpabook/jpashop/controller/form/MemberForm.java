@@ -1,4 +1,4 @@
-package jpabook.jpashop.controller;
+package jpabook.jpashop.controller.form;
 
 import javax.validation.constraints.NotEmpty;
 import lombok.Getter;
